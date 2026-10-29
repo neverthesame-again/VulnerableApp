@@ -460,7 +460,25 @@ function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
         "</li>";
     }
     helpText = helpText + "</ol>";
-    document.getElementById("helpText").innerHTML = helpText;
+    const helpEl = document.getElementById("helpText");
+    helpEl.textContent = "";
+    const ol = document.createElement("ol");
+    const avs = vulnerableAppEndPointData[currentId]["Detailed Information"][currentKey]["AttackVectors"];
+    for (let idx in avs) {
+      const av = avs[idx];
+      const li = document.createElement("li");
+      const bDesc = document.createElement("b");
+      bDesc.textContent = "Description about the attack:";
+      li.appendChild(bDesc);
+      li.appendChild(document.createTextNode(" " + (av["Description"] || "")));
+      li.appendChild(document.createElement("br"));
+      const bPayload = document.createElement("b");
+      bPayload.textContent = "Payload:";
+      li.appendChild(bPayload);
+      li.appendChild(document.createTextNode(" " + (av["CurlPayload"] || "")));
+      ol.appendChild(li);
+    }
+    helpEl.appendChild(ol);
     document.getElementById("hideHelp").disabled = false;
   });
 
