@@ -6,6 +6,8 @@ services:
     networks:
       - internal
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     environment:
       - DB_ADMIN_USERNAME=${DB_ADMIN_USERNAME}
       - DB_ADMIN_PASSWORD=${DB_ADMIN_PASSWORD}
