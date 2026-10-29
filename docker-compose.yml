@@ -20,8 +20,6 @@ services:
         - mongodb
       networks:
         - app_net
-      security_opt:
-        - no-new-privileges:true
 
     mongodb:
       image: mongo:8.0.12
