@@ -23,6 +23,32 @@ let currentKey;
 // instead, and only acts if it's still the most recent request.
 let requestToken = 0;
 
+function _sanitizeFragment(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null);
+  let node = walker.nextNode();
+  while (node) {
+    const tag = node.tagName ? node.tagName.toLowerCase() : "";
+    if (tag === "script") {
+      const toRemove = node;
+      node = walker.nextNode();
+      toRemove.remove();
+      continue;
+    }
+    const attrs = Array.from(node.attributes || []);
+    for (const attr of attrs) {
+      const name = attr.name.toLowerCase();
+      const value = attr.value || "";
+      if (name.startsWith("on")) {
+        node.removeAttribute(attr.name);
+      } else if ((name === "src" || name === "href") && /^\s*javascript:/i.test(value)) {
+        node.removeAttribute(attr.name);
+      }
+    }
+    node = walker.nextNode();
+  }
+}
+
+
 function _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, onReady) {
   let dynamicScriptsElement = document.getElementById("dynamicScripts");
   let cssElement = document.createElement("link");
@@ -110,7 +136,7 @@ function _callbackForInnerMasterOnClickEvent(
       vulnerableAppEndPointData[id]["Detailed Information"][key][
         "HtmlTemplate"
       ];
-    document.getElementById("vulnerabilityDescription").innerHTML =
+    document.getElementById("vulnerabilityDescription").textContent =
       vulnerableAppEndPointData[id]["Description"];
     let urlToFetchHtmlTemplate = htmlTemplate
       ? "/VulnerableApp/templates/" + vulnerabilitySelected + "/" + htmlTemplate
@@ -133,7 +159,9 @@ function _callbackForInnerMasterOnClickEvent(
         if (requestToken !== thisRequestToken) {
           return;
         }
-        detailTitle.innerHTML = responseText;
+        const fragment = document.createRange().createContextualFragment(responseText);
+        _sanitizeFragment(fragment);
+        detailTitle.replaceChildren(...Array.from(fragment.childNodes));
         _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, () => {
           // Re-check: the asset load itself is async, so navigation could
           // have moved on again between the AJAX response and now.
@@ -187,7 +215,7 @@ function createColumn(detailedInformationArray, key) {
   span.classList.add(
     isSecure ? "secure-variant-tooltip-text" : "unsecure-variant-tooltip-text"
   );
-  span.innerHTML = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
+  span.textContent = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
   svgWithTooltip.appendChild(span);
   svgWithTooltip.appendChild(_getSvgElementForVariant(isSecure));
   column.appendChild(svgWithTooltip);
@@ -241,13 +269,13 @@ function handleElementAutoSelection(vulnerableAppEndPointData, id = 0) {
   }
 
   if (id === 0) {
-    detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+    detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   } else {
     innerMaster.innerHTML = "";
   }
 
   vulnerabilitySelected = vulnerableAppEndPointData[id]["Name"];
-  detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+  detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   appendNewColumn(vulnerableAppEndPointData, id);
 }
 
@@ -432,7 +460,25 @@ function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
         "</li>";
     }
     helpText = helpText + "</ol>";
-    document.getElementById("helpText").innerHTML = helpText;
+    const helpEl = document.getElementById("helpText");
+    helpEl.textContent = "";
+    const ol = document.createElement("ol");
+    const avs = vulnerableAppEndPointData[currentId]["Detailed Information"][currentKey]["AttackVectors"];
+    for (let idx in avs) {
+      const av = avs[idx];
+      const li = document.createElement("li");
+      const bDesc = document.createElement("b");
+      bDesc.textContent = "Description about the attack:";
+      li.appendChild(bDesc);
+      li.appendChild(document.createTextNode(" " + (av["Description"] || "")));
+      li.appendChild(document.createElement("br"));
+      const bPayload = document.createElement("b");
+      bPayload.textContent = "Payload:";
+      li.appendChild(bPayload);
+      li.appendChild(document.createTextNode(" " + (av["CurlPayload"] || "")));
+      ol.appendChild(li);
+    }
+    helpEl.appendChild(ol);
     document.getElementById("hideHelp").disabled = false;
   });
 

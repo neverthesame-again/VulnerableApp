@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -53,8 +54,7 @@ public class VulnerableAppRestController {
      * @return Entire information for the application.
      * @throws JsonProcessingException if the information cannot be serialized to JSON
      */
-    @GetMapping
-    @RequestMapping("/allEndPoint")
+    @GetMapping("/allEndPoint")
     public String allEndPoints() throws JsonProcessingException {
         return "<pre>"
                 + JSONSerializationUtils.serializeWithPrettyPrintJSON(
@@ -86,8 +86,7 @@ public class VulnerableAppRestController {
      * @return Entire information for the application.
      * @throws JsonProcessingException if the information cannot be processed
      */
-    @GetMapping
-    @RequestMapping("/allEndPointJson")
+    @GetMapping("/allEndPointJson")
     public List<AllEndPointsResponseBean> allEndPointsJsonResponse()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getSupportedEndPoints();
@@ -108,7 +107,7 @@ public class VulnerableAppRestController {
      */
     @Deprecated(forRemoval = true)
     @GetMapping
-    @RequestMapping("/scanner")
+    @RequestMapping(value = "/scanner", method = RequestMethod.GET)
     public ResponseEntity<List<ScannerResponseBean>> getScannerRelatedInformation(
             HttpServletRequest request) throws JsonProcessingException, UnknownHostException {
         String appUrl = applicationUrl(request);
@@ -145,8 +144,7 @@ public class VulnerableAppRestController {
      * @return the parsed expected issues; cached after the first read
      * @throws IOException if the ground truth cannot be read
      */
-    @GetMapping
-    @RequestMapping("/scanner/sast")
+    @GetMapping("/scanner/sast")
     public List<ExpectedIssue> getSastScannerRelatedInformation() throws IOException {
         return expectedIssuesProvider.getExpectedIssues();
     }
@@ -178,8 +176,7 @@ public class VulnerableAppRestController {
      *
      * @return {@link ScannerMetaResponseBean}
      */
-    @GetMapping
-    @RequestMapping("/scanner/metadata")
+    @GetMapping("/scanner/metadata")
     public ScannerMetaResponseBean getScannerRelatedMetaInformation() {
         return new ScannerMetaResponseBean(
                 Arrays.asList(VulnerabilityType.values()),
@@ -197,7 +194,7 @@ public class VulnerableAppRestController {
      * @throws UnknownHostException declared for API compatibility; the host is read from the
      *     request
      */
-    @RequestMapping("/sitemap.xml")
+    @GetMapping("/sitemap.xml")
     public String sitemapForPassiveScanners(HttpServletRequest request)
             throws JsonProcessingException, UnknownHostException {
         List<AllEndPointsResponseBean> allEndPoints = allEndPointsJsonResponse();

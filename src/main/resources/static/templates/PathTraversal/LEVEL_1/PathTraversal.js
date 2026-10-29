@@ -12,28 +12,41 @@ addingEventListenerToLoadImageButton();
 
 function appendResponseCallback(data) {
   if (data.isValid) {
-    let tableInformation = '<table id="InfoTable">';
-    let content = JSON.parse(data.content);
+    const tableElement = document.createElement("table");
+    tableElement.id = "InfoTable";
+
+    const content = JSON.parse(data.content);
+
     if (content.length > 0) {
+      const headerRow = document.createElement("tr");
       for (let key in content[0]) {
-        tableInformation =
-          tableInformation + '<th id="InfoColumn">' + key + "</th>";
+        const th = document.createElement("th");
+        th.id = "InfoColumn";
+        th.textContent = key;
+        headerRow.appendChild(th);
       }
+      tableElement.appendChild(headerRow);
     }
+
     for (let index in content) {
-      tableInformation = tableInformation + '<tr id="Info">';
+      const tr = document.createElement("tr");
+      tr.id = "Info";
       for (let key in content[index]) {
-        tableInformation =
-          tableInformation +
-          '<td id="InfoColumn">' +
-          content[index][key] +
-          "</td>";
+        const td = document.createElement("td");
+        td.id = "InfoColumn";
+        td.textContent = String(content[index][key]);
+        tr.appendChild(td);
       }
-      tableInformation = tableInformation + "</tr>";
+      tableElement.appendChild(tr);
     }
-    tableInformation = tableInformation + "</table>";
-    document.getElementById("Information").innerHTML = tableInformation;
+
+    const infoEl = document.getElementById("Information");
+    while (infoEl.firstChild) {
+      infoEl.removeChild(infoEl.firstChild);
+    }
+    infoEl.appendChild(tableElement);
   } else {
-    document.getElementById("Information").innerHTML = "Unable to Load Users";
+    const infoEl = document.getElementById("Information");
+    infoEl.textContent = "Unable to Load Users";
   }
 }
