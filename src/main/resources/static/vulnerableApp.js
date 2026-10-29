@@ -215,7 +215,7 @@ function createColumn(detailedInformationArray, key) {
   span.classList.add(
     isSecure ? "secure-variant-tooltip-text" : "unsecure-variant-tooltip-text"
   );
-  span.innerHTML = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
+  span.textContent = isSecure ? variantTooltip.secure : variantTooltip.unsecure;
   svgWithTooltip.appendChild(span);
   svgWithTooltip.appendChild(_getSvgElementForVariant(isSecure));
   column.appendChild(svgWithTooltip);
