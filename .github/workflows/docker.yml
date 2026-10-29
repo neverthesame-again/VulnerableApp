@@ -34,7 +34,7 @@ jobs:
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
 
       - name: Setup GitVersion action
-        uses: gittools/actions/gitversion/setup@v0.9.7
+        uses: gittools/actions/gitversion/setup@62f943a7b7e1981bb87a8314f304524657551786 # v0.9.7
         with:
           versionSpec: '5.x'
 
