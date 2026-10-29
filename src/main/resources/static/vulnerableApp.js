@@ -23,6 +23,32 @@ let currentKey;
 // instead, and only acts if it's still the most recent request.
 let requestToken = 0;
 
+function _sanitizeFragment(root) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null);
+  let node = walker.nextNode();
+  while (node) {
+    const tag = node.tagName ? node.tagName.toLowerCase() : "";
+    if (tag === "script") {
+      const toRemove = node;
+      node = walker.nextNode();
+      toRemove.remove();
+      continue;
+    }
+    const attrs = Array.from(node.attributes || []);
+    for (const attr of attrs) {
+      const name = attr.name.toLowerCase();
+      const value = attr.value || "";
+      if (name.startsWith("on")) {
+        node.removeAttribute(attr.name);
+      } else if ((name === "src" || name === "href") && /^\s*javascript:/i.test(value)) {
+        node.removeAttribute(attr.name);
+      }
+    }
+    node = walker.nextNode();
+  }
+}
+
+
 function _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, onReady) {
   let dynamicScriptsElement = document.getElementById("dynamicScripts");
   let cssElement = document.createElement("link");
@@ -133,7 +159,9 @@ function _callbackForInnerMasterOnClickEvent(
         if (requestToken !== thisRequestToken) {
           return;
         }
-        detailTitle.innerHTML = responseText;
+        const fragment = document.createRange().createContextualFragment(responseText);
+        _sanitizeFragment(fragment);
+        detailTitle.replaceChildren(...Array.from(fragment.childNodes));
         _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, () => {
           // Re-check: the asset load itself is async, so navigation could
           // have moved on again between the AJAX response and now.
