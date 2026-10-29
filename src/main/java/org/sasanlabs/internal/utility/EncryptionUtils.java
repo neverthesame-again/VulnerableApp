@@ -2,7 +2,6 @@ package org.sasanlabs.internal.utility;
 
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -15,7 +14,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.IvParameterSpec;
 import org.sasanlabs.internal.utility.exception.EncryptionException;
 
 /** This class contains methods related to encryption. */
@@ -87,19 +85,13 @@ public class EncryptionUtils {
     public static String encrypt(String plaintext, SecretKey key) throws EncryptionException {
         try {
             // VULNERABILITY NOTE: ECB mode does not use an IV and reveals patterns (CWE-327)
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            byte[] iv = new byte[16];
-            new SecureRandom().nextBytes(iv);
-            IvParameterSpec ivSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
 
             byte[] encrypted = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
-            byte[] combined = new byte[iv.length + encrypted.length];
-            System.arraycopy(iv, 0, combined, 0, iv.length);
-            System.arraycopy(encrypted, 0, combined, iv.length, encrypted.length);
-            return java.util.Base64.getEncoder().encodeToString(combined);
+            return java.util.Base64.getEncoder().encodeToString(encrypted);
 
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
             throw new EncryptionException("AES configuration not found ", e);
         } catch (InvalidKeyException e) {
             throw new EncryptionException("The provided key is invalid for AES encryption", e);
