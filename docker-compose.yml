@@ -11,6 +11,8 @@ services:
       image: sasanlabs/owasp-vulnerableapp-jsp:latest
       networks:
         - app_net
+      security_opt:
+        - no-new-privileges:true
  
     VulnerableApp-php:
       image: sasanlabs/owasp-vulnerableapp-php:latest
