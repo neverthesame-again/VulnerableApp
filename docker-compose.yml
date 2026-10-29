@@ -138,6 +138,8 @@ services:
        - ENABLE_VULNERABLEAPP_JSP=true
        - ENABLE_VULNERABLEAPP_PHP=true
        - ENABLE_LLMFORGE=true
+      security_opt:
+       - no-new-privileges:true
       networks:
         - app_net
 
