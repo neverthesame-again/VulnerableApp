@@ -32,19 +32,50 @@ function updatePlaceholderDiv() {
     boxSizing: "border-box",
   });
 
-  overlay.innerHTML =
-    '<div class="redirect-modal-card">' +
-    '<div class="redirect-modal-icon-wrap">' +
-    '<span class="redirect-modal-icon">&#9888;</span>' +
-    "</div>" +
-    '<h2 class="redirect-modal-title">You are leaving VulnerableApp</h2>' +
-    '<p class="redirect-modal-subtitle">You are about to be redirected to an external site. Please review the destination before continuing.</p>' +
-    '<div class="redirect-url-box"><span class="redirect-dest-url"></span></div>' +
-    '<div class="redirect-modal-actions">' +
-    '<button class="btn-redirect-close">Close</button>' +
-    '<button class="btn-redirect-continue">Continue</button>' +
-    "</div>" +
-    "</div>";
+  // Build modal contents without using innerHTML to avoid XSS vectors
+  var modalCard = document.createElement("div");
+  modalCard.className = "redirect-modal-card";
+
+  var iconWrap = document.createElement("div");
+  iconWrap.className = "redirect-modal-icon-wrap";
+  var iconSpan = document.createElement("span");
+  iconSpan.className = "redirect-modal-icon";
+  iconSpan.textContent = "⚠";
+  iconWrap.appendChild(iconSpan);
+
+  var title = document.createElement("h2");
+  title.className = "redirect-modal-title";
+  title.textContent = "You are leaving VulnerableApp";
+
+  var subtitle = document.createElement("p");
+  subtitle.className = "redirect-modal-subtitle";
+  subtitle.textContent =
+    "You are about to be redirected to an external site. Please review the destination before continuing.";
+
+  var urlBox = document.createElement("div");
+  urlBox.className = "redirect-url-box";
+  var destSpanEl = document.createElement("span");
+  destSpanEl.className = "redirect-dest-url";
+  urlBox.appendChild(destSpanEl);
+
+  var actions = document.createElement("div");
+  actions.className = "redirect-modal-actions";
+  var btnCloseEl = document.createElement("button");
+  btnCloseEl.className = "btn-redirect-close";
+  btnCloseEl.textContent = "Close";
+  var btnContinueEl = document.createElement("button");
+  btnContinueEl.className = "btn-redirect-continue";
+  btnContinueEl.textContent = "Continue";
+  actions.appendChild(btnCloseEl);
+  actions.appendChild(btnContinueEl);
+
+  modalCard.appendChild(iconWrap);
+  modalCard.appendChild(title);
+  modalCard.appendChild(subtitle);
+  modalCard.appendChild(urlBox);
+  modalCard.appendChild(actions);
+
+  overlay.appendChild(modalCard);
 
   document.body.appendChild(overlay);
 
