@@ -144,8 +144,7 @@ public class VulnerableAppRestController {
      * @return the parsed expected issues; cached after the first read
      * @throws IOException if the ground truth cannot be read
      */
-    @GetMapping
-    @RequestMapping("/scanner/sast")
+    @GetMapping("/scanner/sast")
     public List<ExpectedIssue> getSastScannerRelatedInformation() throws IOException {
         return expectedIssuesProvider.getExpectedIssues();
     }
