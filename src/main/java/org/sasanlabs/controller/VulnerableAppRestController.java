@@ -194,7 +194,7 @@ public class VulnerableAppRestController {
      * @throws UnknownHostException declared for API compatibility; the host is read from the
      *     request
      */
-    @RequestMapping("/sitemap.xml")
+    @GetMapping("/sitemap.xml")
     public String sitemapForPassiveScanners(HttpServletRequest request)
             throws JsonProcessingException, UnknownHostException {
         List<AllEndPointsResponseBean> allEndPoints = allEndPointsJsonResponse();
