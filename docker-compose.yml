@@ -29,6 +29,8 @@ services:
        - "27017:27017"
       volumes:
        - mongodb_data:/data/db
+      security_opt:
+       - no-new-privileges:true
       networks:
         app_net:
           aliases:
