@@ -85,8 +85,7 @@ public class VulnerableAppRestController {
      * @return Entire information for the application.
      * @throws JsonProcessingException if the information cannot be processed
      */
-    @GetMapping
-    @RequestMapping("/allEndPointJson")
+    @GetMapping("/allEndPointJson")
     public List<AllEndPointsResponseBean> allEndPointsJsonResponse()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getSupportedEndPoints();
