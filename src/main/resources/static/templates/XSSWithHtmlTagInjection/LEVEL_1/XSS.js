@@ -12,7 +12,10 @@ addingEventListenerToLoadImageButton();
 
 function appendResponseCallback(data) {
   var parentContainer = document.getElementById("parentContainer");
-  parentContainer.innerHTML = data;
+  parentContainer.textContent = '';
+  var child = document.createElement('div');
+  child.textContent = data;
+  parentContainer.appendChild(child);
   if (parentContainer.childNodes.length > 0) {
     parentContainer.childNodes[0].classList.add(
       document.getElementById("fonts").value
