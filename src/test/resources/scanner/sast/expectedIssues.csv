@@ -1,0 +1,2 @@
+CWE,Vulnerability Type,File,Line,Number of Sources
+CWE-000,SampleVulnerability,src/main/java/org/sasanlabs/Application.java,1,1
