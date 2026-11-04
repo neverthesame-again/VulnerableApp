@@ -422,7 +422,12 @@ function _clearHelp() {
 function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
   document.getElementById("showHelp").addEventListener("click", function () {
     document.getElementById("showHelp").disabled = true;
-    let helpText = "<ol>";
+    let helpEl = document.getElementById("helpText");
+    // Clear existing help content
+    while (helpEl.firstChild) {
+      helpEl.removeChild(helpEl.firstChild);
+    }
+    let ol = document.createElement("ol");
     for (let index in vulnerableAppEndPointData[currentId][
       "Detailed Information"
     ][currentKey]["AttackVectors"]) {
@@ -432,16 +437,24 @@ function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
         ]["AttackVectors"][index];
       let curlPayload = attackVector["CurlPayload"];
       let description = attackVector["Description"];
-      helpText =
-        helpText +
-        "<li><b>Description about the attack:</b> " +
-        description +
-        "<br/><b>Payload:</b> " +
-        curlPayload +
-        "</li>";
+
+      let li = document.createElement("li");
+
+      let bDesc = document.createElement("b");
+      bDesc.textContent = "Description about the attack:";
+      li.appendChild(bDesc);
+      li.appendChild(document.createTextNode(" " + (description || "")));
+
+      li.appendChild(document.createElement("br"));
+
+      let bPayload = document.createElement("b");
+      bPayload.textContent = "Payload:";
+      li.appendChild(bPayload);
+      li.appendChild(document.createTextNode(" " + (curlPayload || "")));
+
+      ol.appendChild(li);
     }
-    helpText = helpText + "</ol>";
-    document.getElementById("helpText").innerHTML = helpText;
+    helpEl.appendChild(ol);
     document.getElementById("hideHelp").disabled = false;
   });
 
