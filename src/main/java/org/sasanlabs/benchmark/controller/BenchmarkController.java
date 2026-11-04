@@ -51,6 +51,8 @@ public class BenchmarkController {
 
         BenchmarkResult result = benchmarkService.compare(input);
 
+        String safeTool = input.getTool().replaceAll("[\\r\\n]","_");
+
         try {
             Path written = benchmarkResultWriter.write(result);
             LOGGER.info("Wrote benchmark result for tool '{}' to {}", input.getTool(), written);
