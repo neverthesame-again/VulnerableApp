@@ -32,4 +32,4 @@ INSERT INTO auth_users VALUES (9, 'admin_secure', '<REDACTED>', NULL, 'BCRYPT', 
 
 -- Level 10: Low-iteration BCrypt (cost factor 4)
 -- Bcrypt hash (cost 4) for the common password 'sunshine'
-INSERT INTO auth_users VALUES (10, 'admin_lowcost', '$2a$04$rK/CT/Bz7GjjGLnB3WWjTOpMpNcGJzmoh.bdc7gQJ4DBQnKj9xnHC', NULL, 'BCRYPT_LOW_ITERATION', 10, 'admin_lowcost@example.com', 'ADMIN');
+INSERT INTO auth_users VALUES (10, 'admin_lowcost', 'REDACTED', NULL, 'BCRYPT_LOW_ITERATION', 10, 'admin_lowcost@example.com', 'ADMIN');
