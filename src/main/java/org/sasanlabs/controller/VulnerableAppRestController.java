@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -85,7 +86,7 @@ public class VulnerableAppRestController {
      * @throws JsonProcessingException if the information cannot be processed
      */
     @GetMapping
-    @RequestMapping("/allEndPointJson")
+    @RequestMapping(value = "/allEndPointJson", method = RequestMethod.GET)
     public List<AllEndPointsResponseBean> allEndPointsJsonResponse()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getSupportedEndPoints();
