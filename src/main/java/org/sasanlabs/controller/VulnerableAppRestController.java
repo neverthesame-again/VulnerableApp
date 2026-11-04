@@ -178,7 +178,7 @@ public class VulnerableAppRestController {
      * @return {@link ScannerMetaResponseBean}
      */
     @GetMapping
-    @RequestMapping("/scanner/metadata")
+    @RequestMapping(value = "/scanner/metadata", method = RequestMethod.GET)
     public ScannerMetaResponseBean getScannerRelatedMetaInformation() {
         return new ScannerMetaResponseBean(
                 Arrays.asList(VulnerabilityType.values()),
