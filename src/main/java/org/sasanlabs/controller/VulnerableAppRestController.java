@@ -67,8 +67,7 @@ public class VulnerableAppRestController {
      * @return List of {@link VulnerabilityDefinition}s.
      * @throws JsonProcessingException if the definitions cannot be processed
      */
-    @GetMapping
-    @RequestMapping("/VulnerabilityDefinitions")
+    @GetMapping("/VulnerabilityDefinitions")
     public List<VulnerabilityDefinition> getVulnerabilityDefinitions()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getVulnerabilityDefinitions();
