@@ -14,7 +14,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.GCMParameterSpec;
 import org.sasanlabs.internal.utility.exception.EncryptionException;
 
 /** This class contains methods related to encryption. */
@@ -85,19 +84,12 @@ public class EncryptionUtils {
 
     public static String encrypt(String plaintext, SecretKey key) throws EncryptionException {
         try {
-            // Use AES-GCM for authenticated encryption with a random IV (nonce)
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-            byte[] iv = new byte[12]; // 96-bit nonce recommended for GCM
-            new SecureRandom().nextBytes(iv);
-            GCMParameterSpec spec = new GCMParameterSpec(128, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, key, spec);
+            // VULNERABILITY NOTE: ECB mode does not use an IV and reveals patterns (CWE-327)
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
 
             byte[] encrypted = cipher.doFinal(plaintext.getBytes(StandardCharsets.UTF_8));
-            // Prepend IV to ciphertext so it can be used for decryption
-            byte[] out = new byte[iv.length + encrypted.length];
-            System.arraycopy(iv, 0, out, 0, iv.length);
-            System.arraycopy(encrypted, 0, out, iv.length, encrypted.length);
-            return java.util.Base64.getEncoder().encodeToString(out);
+            return java.util.Base64.getEncoder().encodeToString(encrypted);
 
         } catch (NoSuchPaddingException | NoSuchAlgorithmException e) {
             throw new EncryptionException("AES configuration not found ", e);
