@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -107,7 +108,7 @@ public class VulnerableAppRestController {
      */
     @Deprecated(forRemoval = true)
     @GetMapping
-    @RequestMapping("/scanner")
+    @RequestMapping(value = "/scanner", method = RequestMethod.GET)
     public ResponseEntity<List<ScannerResponseBean>> getScannerRelatedInformation(
             HttpServletRequest request) throws JsonProcessingException, UnknownHostException {
         String appUrl = applicationUrl(request);
