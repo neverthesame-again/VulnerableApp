@@ -57,7 +57,8 @@ export function setDemoUserCookie(value) {
 
 export function fetchDataCallback(data, request) {
   updateDiagnostics(request);
-  document.getElementById("cachePoisoningResponse").innerHTML = data.content;
+  const respEl = document.getElementById("cachePoisoningResponse");
+  if (respEl) respEl.textContent = data.content;
 }
 
 function updateDiagnostics(request) {
