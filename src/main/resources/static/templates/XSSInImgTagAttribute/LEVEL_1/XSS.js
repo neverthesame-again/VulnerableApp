@@ -13,5 +13,6 @@ function addingEventListenerToLoadImageButton() {
 addingEventListenerToLoadImageButton();
 
 function appendResponseCallback(data) {
-  document.getElementById("image").innerHTML = data;
+  // Use textContent to avoid interpreting data as HTML and prevent XSS
+  document.getElementById("image").textContent = data;
 }
