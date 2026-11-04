@@ -12,8 +12,6 @@ services:
  
     VulnerableApp-php:
       image: sasanlabs/owasp-vulnerableapp-php:latest
-      security_opt:
-        - no-new-privileges:true
       depends_on:
         - mongodb
 
