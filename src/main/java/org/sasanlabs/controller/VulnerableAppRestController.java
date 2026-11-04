@@ -53,8 +53,7 @@ public class VulnerableAppRestController {
      * @return Entire information for the application.
      * @throws JsonProcessingException if the information cannot be serialized to JSON
      */
-    @GetMapping
-    @RequestMapping("/allEndPoint")
+    @GetMapping("/allEndPoint")
     public String allEndPoints() throws JsonProcessingException {
         return "<pre>"
                 + JSONSerializationUtils.serializeWithPrettyPrintJSON(
