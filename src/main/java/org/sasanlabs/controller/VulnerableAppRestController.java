@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -130,7 +129,7 @@ public class VulnerableAppRestController {
      * @throws UnknownHostException if the host of the application cannot be resolved
      */
     @GetMapping
-    @RequestMapping("/scanner/dast")
+    @RequestMapping(value = "/scanner/dast", method = RequestMethod.GET)
     public List<ScannerResponseBean> getDastScannerRelatedInformation(HttpServletRequest request)
             throws JsonProcessingException, UnknownHostException {
         return getAllSupportedEndPoints.getScannerRelatedEndPointInformation(
@@ -146,7 +145,7 @@ public class VulnerableAppRestController {
      * @throws IOException if the ground truth cannot be read
      */
     @GetMapping
-    @RequestMapping("/scanner/sast")
+    @RequestMapping(value = "/scanner/sast", method = RequestMethod.GET)
     public List<ExpectedIssue> getSastScannerRelatedInformation() throws IOException {
         return expectedIssuesProvider.getExpectedIssues();
     }
