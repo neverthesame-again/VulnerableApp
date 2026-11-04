@@ -7,8 +7,6 @@ services:
       
     VulnerableApp-jsp:
       image: sasanlabs/owasp-vulnerableapp-jsp:latest
-      security_opt:
-        - no-new-privileges:true
  
     VulnerableApp-php:
       image: sasanlabs/owasp-vulnerableapp-php:latest
