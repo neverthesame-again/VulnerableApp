@@ -11,7 +11,8 @@ function addingEventListenerToUploadImage() {
 addingEventListenerToUploadImage();
 
 function uploadImage(data) {
-  document.getElementById("uploaded_file_info").innerHTML = data.isValid
+  // Use textContent to safely insert untrusted text and avoid XSS via innerHTML
+  document.getElementById("uploaded_file_info").textContent = data.isValid
     ? "File uploaded at location:" + data.content
     : data.content;
 }
