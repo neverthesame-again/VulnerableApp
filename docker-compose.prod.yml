@@ -26,6 +26,8 @@ services:
       - VulnerableApp-base
     image: sasanlabs/owasp-vulnerableapp-facade:latest
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ./templates:/etc/nginx/templates:ro
     ports:
