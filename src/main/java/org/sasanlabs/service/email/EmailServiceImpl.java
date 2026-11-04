@@ -42,7 +42,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             javaMailSender.send(message);
         } catch (MailSendException ex) {
-            LOGGER.warn("Mail server unavailable while sending email to {}", to, ex);
+            LOGGER.warn("Mail server unavailable while sending email to {}", sanitizeForLog(to), ex);
         }
     }
 
@@ -57,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(subject);
             helper.setText(htmlBody, true);
         } catch (MessagingException ex) {
-            LOGGER.warn("Mail server unavailable while sending email to {}", to, ex);
+            LOGGER.warn("Mail server unavailable while sending email to {}", sanitizeForLog(to), ex);
         }
         javaMailSender.send(message);
     }
@@ -80,6 +80,16 @@ public class EmailServiceImpl implements EmailService {
                 to,
                 "VulnerableApp email verification",
                 "Use the following link to verify your email address: " + verificationUrl);
+    }
+
+    /**
+     * Sanitize user-controlled strings for logging by escaping CR and LF to prevent log injection.
+     */
+    private static String sanitizeForLog(String s) {
+        if (s == null) {
+            return null;
+        }
+        return s.replace("\r", "\\r").replace("\n", "\\n");
     }
 
     private String buildUrl(String path, String token) {
