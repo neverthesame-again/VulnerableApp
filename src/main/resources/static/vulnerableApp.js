@@ -250,13 +250,13 @@ function handleElementAutoSelection(vulnerableAppEndPointData, id = 0) {
   }
 
   if (id === 0) {
-    detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+    detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   } else {
-    innerMaster.innerHTML = "";
+    innerMaster.textContent = "";
   }
 
   vulnerabilitySelected = vulnerableAppEndPointData[id]["Name"];
-  detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+  detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   appendNewColumn(vulnerableAppEndPointData, id);
 }
 
