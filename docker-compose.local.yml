@@ -34,6 +34,8 @@ services:
         - VulnerableApp-base
         - mailpit
       image: sasanlabs/owasp-vulnerableapp-facade:latest
+      security_opt:
+       - no-new-privileges:true
       volumes:
        - ./templates:/etc/nginx/templates
       ports:
