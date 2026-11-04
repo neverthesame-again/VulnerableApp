@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -53,8 +54,7 @@ public class VulnerableAppRestController {
      * @return Entire information for the application.
      * @throws JsonProcessingException if the information cannot be serialized to JSON
      */
-    @GetMapping
-    @RequestMapping("/allEndPoint")
+    @GetMapping("/allEndPoint")
     public String allEndPoints() throws JsonProcessingException {
         return "<pre>"
                 + JSONSerializationUtils.serializeWithPrettyPrintJSON(
@@ -68,8 +68,7 @@ public class VulnerableAppRestController {
      * @return List of {@link VulnerabilityDefinition}s.
      * @throws JsonProcessingException if the definitions cannot be processed
      */
-    @GetMapping
-    @RequestMapping("/VulnerabilityDefinitions")
+    @GetMapping("/VulnerabilityDefinitions")
     public List<VulnerabilityDefinition> getVulnerabilityDefinitions()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getVulnerabilityDefinitions();
@@ -87,7 +86,7 @@ public class VulnerableAppRestController {
      * @throws JsonProcessingException if the information cannot be processed
      */
     @GetMapping
-    @RequestMapping("/allEndPointJson")
+    @RequestMapping(value = "/allEndPointJson", method = RequestMethod.GET)
     public List<AllEndPointsResponseBean> allEndPointsJsonResponse()
             throws JsonProcessingException {
         return getAllSupportedEndPoints.getSupportedEndPoints();
@@ -108,7 +107,7 @@ public class VulnerableAppRestController {
      */
     @Deprecated(forRemoval = true)
     @GetMapping
-    @RequestMapping("/scanner")
+    @RequestMapping(value = "/scanner", method = RequestMethod.GET)
     public ResponseEntity<List<ScannerResponseBean>> getScannerRelatedInformation(
             HttpServletRequest request) throws JsonProcessingException, UnknownHostException {
         String appUrl = applicationUrl(request);
@@ -130,7 +129,7 @@ public class VulnerableAppRestController {
      * @throws UnknownHostException if the host of the application cannot be resolved
      */
     @GetMapping
-    @RequestMapping("/scanner/dast")
+    @RequestMapping(value = "/scanner/dast", method = RequestMethod.GET)
     public List<ScannerResponseBean> getDastScannerRelatedInformation(HttpServletRequest request)
             throws JsonProcessingException, UnknownHostException {
         return getAllSupportedEndPoints.getScannerRelatedEndPointInformation(
@@ -146,7 +145,7 @@ public class VulnerableAppRestController {
      * @throws IOException if the ground truth cannot be read
      */
     @GetMapping
-    @RequestMapping("/scanner/sast")
+    @RequestMapping(value = "/scanner/sast", method = RequestMethod.GET)
     public List<ExpectedIssue> getSastScannerRelatedInformation() throws IOException {
         return expectedIssuesProvider.getExpectedIssues();
     }
@@ -179,7 +178,7 @@ public class VulnerableAppRestController {
      * @return {@link ScannerMetaResponseBean}
      */
     @GetMapping
-    @RequestMapping("/scanner/metadata")
+    @RequestMapping(value = "/scanner/metadata", method = RequestMethod.GET)
     public ScannerMetaResponseBean getScannerRelatedMetaInformation() {
         return new ScannerMetaResponseBean(
                 Arrays.asList(VulnerabilityType.values()),
@@ -197,7 +196,7 @@ public class VulnerableAppRestController {
      * @throws UnknownHostException declared for API compatibility; the host is read from the
      *     request
      */
-    @RequestMapping("/sitemap.xml")
+    @GetMapping("/sitemap.xml")
     public String sitemapForPassiveScanners(HttpServletRequest request)
             throws JsonProcessingException, UnknownHostException {
         List<AllEndPointsResponseBean> allEndPoints = allEndPointsJsonResponse();

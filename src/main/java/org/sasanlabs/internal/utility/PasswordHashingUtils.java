@@ -54,6 +54,14 @@ public final class PasswordHashingUtils {
 
     public static String getHashAsHex(String rawPassword, HashAlgorithm hashAlgorithm) {
         try {
+            // Prevent use of known-weak hashing algorithms
+            if (hashAlgorithm == HashAlgorithm.MD4
+                    || hashAlgorithm == HashAlgorithm.MD5
+                    || hashAlgorithm == HashAlgorithm.SHA1) {
+                throw new RuntimeException("Refusing to use insecure hash algorithm: " + hashAlgorithm.label()
+                        + ". Use a stronger algorithm such as SHA-256 or a password KDF like bcrypt.");
+            }
+
             MessageDigest messageDigest = MessageDigest.getInstance(hashAlgorithm.label(), "BC");
             byte[] digest = messageDigest.digest(rawPassword.getBytes(StandardCharsets.UTF_8));
             return EncodingUtils.bytesToHex(digest);

@@ -35,10 +35,16 @@ public class BenchmarkResultWriter {
     }
 
     public Path write(BenchmarkResult result, String benchmarksDir) throws IOException {
-        Path dir = Paths.get(benchmarksDir);
+        String safeDirName = sanitizeDirName(benchmarksDir);
+        Path dir = Paths.get(safeDirName);
         Files.createDirectories(dir);
         String fileName = sanitizeToolName(result.getTool()) + "-results.json";
         Path target = dir.resolve(fileName);
+        Path normalizedDir = dir.toAbsolutePath().normalize();
+        Path normalizedTarget = target.toAbsolutePath().normalize();
+        if (!normalizedTarget.startsWith(normalizedDir)) {
+            throw new IOException("Invalid benchmarks directory or tool name");
+        }
         Path temp = Files.createTempFile(dir, fileName + ".", ".tmp");
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(temp.toFile(), result);
@@ -75,6 +81,23 @@ public class BenchmarkResultWriter {
         }
         if (cleaned.length() > MAX_TOOL_LENGTH) {
             cleaned = cleaned.substring(0, MAX_TOOL_LENGTH);
+        }
+        return cleaned;
+    }
+
+    /**
+     * Sanitize a configured benchmarks directory name. Only allow a simple directory name
+     * without path separators or other potentially dangerous characters. Returns a
+     * sensible default if the input is null or becomes empty after cleaning.
+     */
+    private static String sanitizeDirName(String dir) {
+        if (dir == null || dir.trim().isEmpty()) {
+            return "benchmarks";
+        }
+        // Remove anything except alpha-numeric, underscore and hyphen to avoid separators and traversal
+        String cleaned = dir.trim().replaceAll("[^A-Za-z0-9_-]", "");
+        if (cleaned.isEmpty()) {
+            return "benchmarks";
         }
         return cleaned;
     }

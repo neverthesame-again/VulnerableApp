@@ -12,28 +12,46 @@ addingEventListenerToLoadImageButton();
 
 function appendResponseCallback(data) {
   if (data.isValid) {
-    let tableInformation = '<table id="InfoTable">';
     let content = JSON.parse(data.content);
+    const container = document.getElementById("Information");
+    // Clear existing content
+    while (container.firstChild) container.removeChild(container.firstChild);
+
+    const table = document.createElement("table");
+    table.id = "InfoTable";
+
+    // Build header row if content has entries
     if (content.length > 0) {
+      const thead = document.createElement("thead");
+      const headerRow = document.createElement("tr");
       for (let key in content[0]) {
-        tableInformation =
-          tableInformation + '<th id="InfoColumn">' + key + "</th>";
+        const th = document.createElement("th");
+        th.id = "InfoColumn";
+        th.textContent = key;
+        headerRow.appendChild(th);
       }
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
     }
+
+    const tbody = document.createElement("tbody");
     for (let index in content) {
-      tableInformation = tableInformation + '<tr id="Info">';
+      const row = document.createElement("tr");
+      row.id = "Info";
       for (let key in content[index]) {
-        tableInformation =
-          tableInformation +
-          '<td id="InfoColumn">' +
-          content[index][key] +
-          "</td>";
+        const td = document.createElement("td");
+        td.id = "InfoColumn";
+        // Use textContent to avoid interpreting HTML from untrusted data
+        td.textContent = content[index][key];
+        row.appendChild(td);
       }
-      tableInformation = tableInformation + "</tr>";
+      tbody.appendChild(row);
     }
-    tableInformation = tableInformation + "</table>";
-    document.getElementById("Information").innerHTML = tableInformation;
+    table.appendChild(tbody);
+    container.appendChild(table);
   } else {
-    document.getElementById("Information").innerHTML = "Unable to Load Users";
+    const container = document.getElementById("Information");
+    // Use textContent to avoid interpreting HTML
+    container.textContent = "Unable to Load Users";
   }
 }

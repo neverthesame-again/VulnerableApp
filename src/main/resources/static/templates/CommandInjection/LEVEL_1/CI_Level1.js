@@ -11,5 +11,6 @@ function addingEventListenerToPingButton() {
 addingEventListenerToPingButton();
 
 function pingUtilityCallback(data) {
-  document.getElementById("pingUtilityResponse").innerHTML = data.content;
+  // Use textContent to avoid interpreting untrusted data as HTML and prevent XSS
+  document.getElementById("pingUtilityResponse").textContent = data.content;
 }

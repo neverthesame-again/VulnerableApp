@@ -110,7 +110,7 @@ function _callbackForInnerMasterOnClickEvent(
       vulnerableAppEndPointData[id]["Detailed Information"][key][
         "HtmlTemplate"
       ];
-    document.getElementById("vulnerabilityDescription").innerHTML =
+    document.getElementById("vulnerabilityDescription").textContent =
       vulnerableAppEndPointData[id]["Description"];
     let urlToFetchHtmlTemplate = htmlTemplate
       ? "/VulnerableApp/templates/" + vulnerabilitySelected + "/" + htmlTemplate
@@ -133,7 +133,16 @@ function _callbackForInnerMasterOnClickEvent(
         if (requestToken !== thisRequestToken) {
           return;
         }
-        detailTitle.innerHTML = responseText;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(responseText, 'text/html');
+        // Remove any <script> elements to prevent execution of injected scripts
+        const scripts = doc.querySelectorAll('script');
+        scripts.forEach((s) => s.remove());
+        // Replace detail content with the sanitized nodes from the parsed document
+        detailTitle.innerHTML = '';
+        Array.from(doc.body.childNodes).forEach((node) =>
+          detailTitle.appendChild(document.importNode(node, true))
+        );
         _loadDynamicJSAndCSS(urlToFetchHtmlTemplate, () => {
           // Re-check: the asset load itself is async, so navigation could
           // have moved on again between the AJAX response and now.
@@ -241,13 +250,13 @@ function handleElementAutoSelection(vulnerableAppEndPointData, id = 0) {
   }
 
   if (id === 0) {
-    detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+    detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   } else {
-    innerMaster.innerHTML = "";
+    innerMaster.textContent = "";
   }
 
   vulnerabilitySelected = vulnerableAppEndPointData[id]["Name"];
-  detailTitle.innerHTML = vulnerableAppEndPointData[id]["Description"];
+  detailTitle.textContent = vulnerableAppEndPointData[id]["Description"];
   appendNewColumn(vulnerableAppEndPointData, id);
 }
 
@@ -413,7 +422,12 @@ function _clearHelp() {
 function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
   document.getElementById("showHelp").addEventListener("click", function () {
     document.getElementById("showHelp").disabled = true;
-    let helpText = "<ol>";
+    let helpEl = document.getElementById("helpText");
+    // Clear existing help content
+    while (helpEl.firstChild) {
+      helpEl.removeChild(helpEl.firstChild);
+    }
+    let ol = document.createElement("ol");
     for (let index in vulnerableAppEndPointData[currentId][
       "Detailed Information"
     ][currentKey]["AttackVectors"]) {
@@ -423,16 +437,24 @@ function _addingEventListenerToShowHideHelpButton(vulnerableAppEndPointData) {
         ]["AttackVectors"][index];
       let curlPayload = attackVector["CurlPayload"];
       let description = attackVector["Description"];
-      helpText =
-        helpText +
-        "<li><b>Description about the attack:</b> " +
-        description +
-        "<br/><b>Payload:</b> " +
-        curlPayload +
-        "</li>";
+
+      let li = document.createElement("li");
+
+      let bDesc = document.createElement("b");
+      bDesc.textContent = "Description about the attack:";
+      li.appendChild(bDesc);
+      li.appendChild(document.createTextNode(" " + (description || "")));
+
+      li.appendChild(document.createElement("br"));
+
+      let bPayload = document.createElement("b");
+      bPayload.textContent = "Payload:";
+      li.appendChild(bPayload);
+      li.appendChild(document.createTextNode(" " + (curlPayload || "")));
+
+      ol.appendChild(li);
     }
-    helpText = helpText + "</ol>";
-    document.getElementById("helpText").innerHTML = helpText;
+    helpEl.appendChild(ol);
     document.getElementById("hideHelp").disabled = false;
   });
 
